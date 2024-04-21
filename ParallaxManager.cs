@@ -9,7 +9,6 @@ public class ParallaxManager : MonoBehaviour
     [SerializeField] private Background[] backgrounds;
     [SerializeField] private bool isBackground;
     [SerializeField] private float heightMultiplier;
-    [InspectorName("Anchor (Optional)")]
     [SerializeField] private Transform anchor;
     public Transform gameCamera;
 
