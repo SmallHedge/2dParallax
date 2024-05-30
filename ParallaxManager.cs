@@ -1,5 +1,5 @@
 //Author: Small Hedge Games
-//Date: 21/04/2024
+//Date: 30/05/2024
 
 using UnityEngine;
 using System;
@@ -8,6 +8,7 @@ public class ParallaxManager : MonoBehaviour
 {
     [SerializeField] private Background[] backgrounds;
     [SerializeField] private bool isBackground;
+    [SerializeField] private bool changeAnchorsOnStart;
     [SerializeField] private float heightMultiplier;
     [SerializeField] private Transform anchor;
     public Transform gameCamera;
@@ -18,8 +19,9 @@ public class ParallaxManager : MonoBehaviour
     {
         if (!anchor) anchorPosition = gameCamera.position;
 
-        for (int i = 0; i < backgrounds.Length; i++)
-            backgrounds[i].anchor = backgrounds[i].sprite.position;
+        if(changeAnchorsOnStart)
+            for (int i = 0; i < backgrounds.Length; i++)
+                backgrounds[i].anchor = backgrounds[i].sprite.position;
     }
 
     private void Update()
@@ -29,8 +31,13 @@ public class ParallaxManager : MonoBehaviour
             if (anchor) anchorPosition = anchor.position;
             float adjustedIntensity = backgrounds[i].intensity;
             if (isBackground) adjustedIntensity = (1 - adjustedIntensity) * -1;
-            backgrounds[i].sprite.position = backgrounds[i].anchor + new Vector2(-adjustedIntensity, adjustedIntensity * heightMultiplier) * (gameCamera.position - anchorPosition);
+            backgrounds[i].sprite.position = (Vector2)anchorPosition + backgrounds[i].anchor + new Vector2(-adjustedIntensity, adjustedIntensity * heightMultiplier) * (gameCamera.position - anchorPosition);
         }
+    }
+
+    public void ChangeAnchor(int index, Vector2 anchor)
+    {
+        backgrounds[index].anchor = anchor;
     }
 
     public void GetBackgrounds()
