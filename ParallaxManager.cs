@@ -1,5 +1,5 @@
 //Author: Small Hedge Games
-//Date: 30/05/2024
+//Date: 13/06/2024
 
 using UnityEngine;
 using System;
@@ -11,9 +11,15 @@ public class ParallaxManager : MonoBehaviour
     [SerializeField] private bool changeAnchorsOnStart;
     [SerializeField] private float heightMultiplier;
     [SerializeField] private Transform anchor;
-    public Transform gameCamera;
 
+    public Transform gameCamera;
+    public static ParallaxManager instance;
     private Vector3 anchorPosition;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void Start()
     {
@@ -30,7 +36,7 @@ public class ParallaxManager : MonoBehaviour
         {
             if (anchor) anchorPosition = anchor.position;
             float adjustedIntensity = backgrounds[i].intensity;
-            if (isBackground) adjustedIntensity = (1 - adjustedIntensity) * -1;
+            if (isBackground) --adjustedIntensity;
             backgrounds[i].sprite.position = (Vector2)anchorPosition + backgrounds[i].anchor + new Vector2(-adjustedIntensity, adjustedIntensity * heightMultiplier) * (gameCamera.position - anchorPosition);
         }
     }
@@ -40,7 +46,7 @@ public class ParallaxManager : MonoBehaviour
         backgrounds[index].anchor = anchor;
     }
 
-    public void GetBackgrounds()
+    public void ResetBackgrounds()
     {
         Array.Resize(ref backgrounds, transform.childCount);
         for (int i = 0; i < backgrounds.Length; i++)
@@ -53,15 +59,15 @@ public class ParallaxManager : MonoBehaviour
         }
     }
 
-    public void SetIntensities()
+    public void ResetIntensities()
     {
         for (int i = 0; i < backgrounds.Length; ++i)
-            backgrounds[i].intensity = GetIntensity(i);
+            backgrounds[i].intensity = (float)(i + 1) / (backgrounds.Length + 1);
     }
 
-    private float GetIntensity(float n)
+    public float GetIntensity(int index)
     {
-        return (n + 1) / (backgrounds.Length + 1);
+        return backgrounds[index].intensity;
     }
 }
 
@@ -71,5 +77,5 @@ public struct Background
     [HideInInspector] public string name;
     [Range(0, 1)] public float intensity;
     public Transform sprite;
-    [HideInInspector] public Vector2 anchor;
+    public Vector2 anchor;
 }
